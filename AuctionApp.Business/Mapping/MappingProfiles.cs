@@ -1,4 +1,5 @@
-﻿using AuctionApp.Domain.DTO.UserDTO;
+﻿using AuctionApp.Domain.DTO.AuctionDTOs;
+using AuctionApp.Domain.DTO.UserDTOs;
 using AuctionApp.Domain.Enteties;
 using AutoMapper;
 using System;
@@ -13,6 +14,11 @@ namespace AuctionApp.Business.Mapping
         {
             CreateMap<User,UserDTO>().ReverseMap();
             CreateMap<User,CreateUserDTO>().ReverseMap();
+            CreateMap<UserDTO,ApplicationUser>().ReverseMap();
+            CreateMap<CreateUserDTO, ApplicationUser>().ReverseMap();
+            CreateMap<CreateAuctionDTO, Auction>().ReverseMap();
+            CreateMap<CreateAuctionDTO, AuctionDTO>().ReverseMap();
+            CreateMap<Auction, AuctionDTO>().ReverseMap();
         }
         
     }

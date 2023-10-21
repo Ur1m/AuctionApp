@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AuctionApp.Domain.DTO.UserDTO
+namespace AuctionApp.Domain.DTO.UserDTOs
 {
     public class CreateUserDTO
     {

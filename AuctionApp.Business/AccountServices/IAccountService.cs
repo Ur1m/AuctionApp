@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AuctionApp.Domain.DTO.UserDTOs;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,6 @@ namespace AuctionApp.Business.AccountServices
 {
     public interface IAccountService
     {
-        Task<IdentityResult> RegisterAsync(string firstName, string lastName, string username, string password);
+        Task<IdentityResult> RegisterAsync(CreateUserDTO userDTO);
     }
 }

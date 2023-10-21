@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AuctionApp.Domain.DTO.UserDTO
+namespace AuctionApp.Domain.DTO.UserDTOs
 {
     public class UserDTO
     {
@@ -11,5 +11,7 @@ namespace AuctionApp.Domain.DTO.UserDTO
         public string LastName { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public decimal Budged { get; set; }
+
     }
 }

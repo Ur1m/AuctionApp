@@ -1,10 +1,14 @@
+using AuctionApp.Api.Extensions;
 using AuctionApp.Business.AccountServices;
+using AuctionApp.Business.AuctionServices;
 using AuctionApp.Business.Mapping;
 using AuctionApp.Domain.Enteties;
 using AuctionApp.Infrastructure;
 using AuctionApp.Infrastructure.Repositories;
+using AuctionApp.Infrastructure.Repositories.AuctionRepositories;
 using AuctionApp.Infrastructure.Repositories.UserRepositories;
 using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -39,6 +43,9 @@ namespace AuctionApp.Api
             services.AddDbContext<AuctionAppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddHangfire(configuration => configuration
+                    .UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
                  .AddEntityFrameworkStores<AuctionAppDbContext>()
                  .AddDefaultTokenProviders();
@@ -46,6 +53,8 @@ namespace AuctionApp.Api
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAuctionService, AuctionService>();
+            services.AddScoped<IAuctionRepository, AuctionRepository>();
 
             #region AutoMapper
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new MappingProfiles()); });
@@ -83,6 +92,11 @@ namespace AuctionApp.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
             });
+
+            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection"));
+
+            app.UseHangfireServer();
+            HangfireJobs.RecurringJobs();
         }
     }
 }

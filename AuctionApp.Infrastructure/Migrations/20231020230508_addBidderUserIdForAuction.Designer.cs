@@ -4,14 +4,16 @@ using AuctionApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AuctionApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AuctionAppDbContext))]
-    partial class AuctionAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231020230508_addBidderUserIdForAuction")]
+    partial class addBidderUserIdForAuction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,8 +130,8 @@ namespace AuctionApp.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("Budged")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Budged")
+                        .HasColumnType("float");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");

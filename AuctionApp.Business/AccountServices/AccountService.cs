@@ -1,4 +1,4 @@
-﻿using AuctionApp.Domain.DTO.UserDTO;
+﻿using AuctionApp.Domain.DTO.UserDTOs;
 using AuctionApp.Domain.Enteties;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -24,14 +24,54 @@ namespace AuctionApp.Business.AccountServices
 
         public async Task<IdentityResult> RegisterAsync(CreateUserDTO userDTO)
         {
+
+            if (string.IsNullOrWhiteSpace(userDTO.FirstName) ||
+                string.IsNullOrWhiteSpace(userDTO.LastName) ||
+                string.IsNullOrWhiteSpace(userDTO.Username) ||
+                string.IsNullOrWhiteSpace(userDTO.Password))
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "InvalidInput",
+                    Description = "All fields are required."
+                });
+            }
+
+            if (userDTO.Username.Length < 3 || userDTO.Username.Length > 20)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "InvalidUsernameLength",
+                    Description = "Username must be between 3 and 20 characters."
+                });
+            }
+
+            if (userDTO.Password.Length < 8)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "InvalidPasswordLength",
+                    Description = "Password must be at least 8 characters long."
+                });
+            }
+
             var user = _mapper.Map<ApplicationUser>(userDTO);
-           
+            user.User = new User
+            {
+
+                FirstName = userDTO.FirstName,
+                LastName = userDTO.LastName,
+                Username = userDTO.Username,
+                Password = userDTO.Password,
+                Budged = 1000
+            };
+
+
             var result = await _userManager.CreateAsync(user, userDTO.Password);
 
             if (result.Succeeded)
             {
                 // Optionally, sign the user in after registration
-                await _signInManager.SignInAsync(user, isPersistent: false);
             }
 
             return result;

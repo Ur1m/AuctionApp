@@ -1,10 +1,12 @@
 ﻿using AuctionApp.Business.AccountServices;
-using AuctionApp.Domain.DTO.UserDTO;
+using AuctionApp.Domain.DTO.UserDTOs;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace AuctionApp.Api.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
@@ -24,7 +26,7 @@ namespace AuctionApp.Api.Controllers
                 return BadRequest("Invalid data provided.");
             }
 
-            var result = await _accountService.RegisterAsync(model.FirstName, model.LastName, model.Username, model.Password);
+            var result = await _accountService.RegisterAsync(model);
 
             if (result.Succeeded)
             {
