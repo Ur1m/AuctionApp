@@ -7,6 +7,7 @@ namespace AuctionApp.Domain.Enums
     public enum AuctionStatusEnum
     {
         Created =1,
-        Sold
+        Sold,
+        NotSold
     }
 }

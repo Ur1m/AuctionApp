@@ -77,22 +77,30 @@ namespace AuctionApp.Business.AuctionServices
 
         public async Task CompleteAuctions()
         {
-            var auction = await _auctionRepository.GetAll();
+            var auction = _auctionRepository.GetAllNotSoldOut();
 
             foreach(var item in auction)
             {
                 if (item.EndDate <= DateTime.Now)
                 {
-                    var buyer = await _userRepository.GetById(item.BidderUserId.Value);
-                    buyer.Budged -= item.StartingBid;
-                    _userRepository.Update(buyer);
+                    if(item.BidderUserId != null)
+                    {
+                        var buyer = await _userRepository.GetById(item.BidderUserId.Value);
+                        buyer.Budged -= item.StartingBid;
+                        _userRepository.Update(buyer);
 
-                    var seller = await _userRepository.GetById(item.UserId);
-                    seller.Budged += item.StartingBid;
-                    _userRepository.Update(seller);
+                        var seller = await _userRepository.GetById(item.UserId);
+                        seller.Budged += item.StartingBid;
+                        _userRepository.Update(seller);
 
-                    item.Status = (int)AuctionStatusEnum.Sold;
-                    _auctionRepository.Update(item);
+                        item.Status = (int)AuctionStatusEnum.Sold;
+                        _auctionRepository.Update(item);
+                    }
+                    else
+                    {
+                        item.Status = (int)AuctionStatusEnum.NotSold;
+                        _auctionRepository.Update(item);
+                    }
                 }
             }
         }
