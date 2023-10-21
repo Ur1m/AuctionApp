@@ -1,4 +1,5 @@
 ﻿using AuctionApp.Domain.Enteties;
+using AuctionApp.Domain.Enums;
 using AuctionApp.Infrastructure.Repositories.UserRepositories;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,14 @@ namespace AuctionApp.Infrastructure.Repositories.AuctionRepositories
             var result = DbSet.Where(x => x.EndDate > DateTime.Now)  
                               .OrderBy(x => x.EndDate)      
                               .ToList();
+            return result;
+        }
+
+        public List<Auction> GetAllNotSoldOut()
+        {
+            var result = DbSet.Where(x=>x.Status == (int)AuctionStatusEnum.Created)
+                              .ToList() ;
+
             return result;
         }
     }

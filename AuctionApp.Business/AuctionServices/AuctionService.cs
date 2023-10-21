@@ -1,5 +1,6 @@
 ﻿using AuctionApp.Domain.DTO.AuctionDTOs;
 using AuctionApp.Domain.Enteties;
+using AuctionApp.Domain.Enums;
 using AuctionApp.Infrastructure.Repositories.AuctionRepositories;
 using AuctionApp.Infrastructure.Repositories.UserRepositories;
 using AutoMapper;
@@ -24,8 +25,11 @@ namespace AuctionApp.Business.AuctionServices
 
         public async Task<Auction> CreateAuction(CreateAuctionDTO createAuctionDTO)
         {
+            var mappedAuction = _mapper.Map<Auction>(createAuctionDTO);
 
-            var result = _auctionRepository.Create(_mapper.Map<Auction>(createAuctionDTO));
+            mappedAuction.Status = (int)AuctionStatusEnum.Created;
+
+            var result = _auctionRepository.Create(mappedAuction);
 
             return result;
         }
@@ -86,6 +90,9 @@ namespace AuctionApp.Business.AuctionServices
                     var seller = await _userRepository.GetById(item.UserId);
                     seller.Budged += item.StartingBid;
                     _userRepository.Update(seller);
+
+                    item.Status = (int)AuctionStatusEnum.Sold;
+                    _auctionRepository.Update(item);
                 }
             }
         }

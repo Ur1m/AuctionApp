@@ -6,6 +6,7 @@ namespace AuctionApp.Infrastructure.Repositories.AuctionRepositories
     public interface IAuctionRepository : IGenericRepository<Auction>
     {
         List<Auction> GetTimeAscAuctions();
+        List<Auction> GetAllNotSoldOut();
 
     }
 }
