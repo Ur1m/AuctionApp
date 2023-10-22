@@ -23,6 +23,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,9 +31,11 @@ namespace AuctionApp.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _env;
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -72,19 +75,19 @@ namespace AuctionApp.Api
                     Version = "v1",
                 });
             });
+            #region Configure Serilog
+            //Configure Serilog to generate Log File
             Log.Logger = new LoggerConfiguration()
-              .MinimumLevel.Information()
-              .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
-              .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
-              .CreateLogger();
-
-            // Register Serilog logger with DI
-            services.AddLogging(builder => builder.AddSerilog());
+                 .MinimumLevel.Debug()
+                 .WriteTo.File(Path.Combine(_env.ContentRootPath + "/Logs", "Log.txt"),
+                  flushToDiskInterval: TimeSpan.FromDays(31))
+                 .CreateLogger();
+            #endregion
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -108,7 +111,9 @@ namespace AuctionApp.Api
 
             app.UseHangfireServer();
             HangfireJobs.RecurringJobs();
-            app.UseSerilogRequestLogging();
+            #region Use Serilog
+            loggerFactory.AddSerilog();
+            #endregion
         }
     }
 }
