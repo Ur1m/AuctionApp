@@ -2,6 +2,7 @@ using AuctionApp.Api.Extensions;
 using AuctionApp.Business.AccountServices;
 using AuctionApp.Business.AuctionServices;
 using AuctionApp.Business.Mapping;
+using AuctionApp.Business.UserServices;
 using AuctionApp.Domain.Enteties;
 using AuctionApp.Infrastructure;
 using AuctionApp.Infrastructure.Repositories;
@@ -19,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +57,7 @@ namespace AuctionApp.Api
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuctionService, AuctionService>();
             services.AddScoped<IAuctionRepository, AuctionRepository>();
+            services.AddScoped<IUserService, UserService>();
 
             #region AutoMapper
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new MappingProfiles()); });
@@ -69,6 +72,14 @@ namespace AuctionApp.Api
                     Version = "v1",
                 });
             });
+            Log.Logger = new LoggerConfiguration()
+              .MinimumLevel.Information()
+              .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+              .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+              .CreateLogger();
+
+            // Register Serilog logger with DI
+            services.AddLogging(builder => builder.AddSerilog());
 
         }
 
@@ -97,6 +108,7 @@ namespace AuctionApp.Api
 
             app.UseHangfireServer();
             HangfireJobs.RecurringJobs();
+            app.UseSerilogRequestLogging();
         }
     }
 }

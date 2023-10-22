@@ -13,6 +13,7 @@ namespace AuctionApp.Business.AuctionServices
         List<AuctionDTO> GetTimeAscAuctions();
         bool DeleteAuction(int id);
         Task<AuctionDTO> GetAuctionById(int id);
+        List<AuctionDTO> GetAllAuctionsByUserId(int id);
 
     }
 }

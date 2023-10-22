@@ -9,6 +9,7 @@ namespace AuctionApp.Business.AccountServices
 {
     public interface IAccountService
     {
+        Task<SignInResult> LoginAsync(LoginDTO loginDTO);
         Task<IdentityResult> RegisterAsync(CreateUserDTO userDTO);
     }
 }

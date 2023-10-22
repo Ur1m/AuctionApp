@@ -40,6 +40,12 @@ namespace AuctionApp.Business.AuctionServices
 
             return _mapper.Map<List<AuctionDTO>>(auctions);
         }
+         public List<AuctionDTO> GetAllAuctionsByUserId(int id)
+        {
+            var auctions = _auctionRepository.GetAllAuctionsByUserId(id);
+
+            return _mapper.Map<List<AuctionDTO>>(auctions);
+        }
 
         public async Task<AuctionDTO> GetAuctionById(int id)
         {
@@ -63,7 +69,9 @@ namespace AuctionApp.Business.AuctionServices
         public async Task<AuctionDTO> BidAuction(int userId, int auctionId, decimal ammount)
         {
             var auction = await _auctionRepository.GetById(auctionId);
+
             var user = await _userRepository.GetById(userId);
+
             if (auction.StartingBid < ammount && user.Budged >= ammount && userId != auction.UserId)
             {
                 auction.BidderUserId = userId;

@@ -7,6 +7,8 @@ namespace AuctionApp.Infrastructure.Repositories.AuctionRepositories
     {
         List<Auction> GetTimeAscAuctions();
         List<Auction> GetAllNotSoldOut();
+        List<Auction> GetAllAuctionsByUserId(int id);
+
 
     }
 }

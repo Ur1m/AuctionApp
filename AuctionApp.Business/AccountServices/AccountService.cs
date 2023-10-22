@@ -1,9 +1,12 @@
 ﻿using AuctionApp.Domain.DTO.UserDTOs;
 using AuctionApp.Domain.Enteties;
+using AuctionApp.Infrastructure.Repositories.UserRepositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,13 +16,33 @@ namespace AuctionApp.Business.AccountServices
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUserRepository _userRepository;
         private IMapper _mapper;
 
-        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IMapper mapper)
+        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IMapper mapper, IUserRepository userRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _userRepository = userRepository;
+        }
+
+        public async Task<SignInResult> LoginAsync(LoginDTO loginDTO)
+        {
+            if (loginDTO == null)
+            {
+                return SignInResult.Failed;
+            }
+            var user = await LogInForUser(loginDTO);
+
+            var result = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
+
+            if (result == true)
+            {
+                return SignInResult.Success;
+            }
+
+            return SignInResult.Failed;
         }
 
         public async Task<IdentityResult> RegisterAsync(CreateUserDTO userDTO)
@@ -75,6 +98,12 @@ namespace AuctionApp.Business.AccountServices
             }
 
             return result;
+        }
+
+        public async Task<ApplicationUser> LogInForUser(LoginDTO userRequest)
+        {
+            return await _userManager.Users.Include(x => x.User).Where(x => x.User.Username == userRequest.Username || x.User.Password == userRequest.Password).FirstOrDefaultAsync();
+
         }
     }
 }

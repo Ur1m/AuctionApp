@@ -30,5 +30,13 @@ namespace AuctionApp.Infrastructure.Repositories.AuctionRepositories
 
             return result;
         }
+
+        public List<Auction> GetAllAuctionsByUserId(int id)
+        {
+            var result = DbSet.Where(x => x.UserId == id)
+                              .ToList();
+
+            return result;
+        }
     }
 }

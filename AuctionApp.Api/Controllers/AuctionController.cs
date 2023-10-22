@@ -3,6 +3,7 @@ using AuctionApp.Domain.DTO.AuctionDTOs;
 using AuctionApp.Domain.Enteties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,11 +15,28 @@ namespace AuctionApp.Api.Controllers
     public class AuctionController : ControllerBase
     {
         private readonly IAuctionService _auctionService;
-        public AuctionController(IAuctionService auctionService)
+        private readonly ILogger<AccountController> _logger;
+
+        public AuctionController(IAuctionService auctionService, ILogger<AccountController> logger)
         {
             _auctionService = auctionService;
+            _logger = logger;
         }
 
+        [HttpGet("getAllAuctionsByUserId")]
+        public List<AuctionDTO> GetAllAuctionsByUserId(int id)
+        {
+            try
+            {
+                return _auctionService.GetAllAuctionsByUserId(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while GetAllAuctionsByUserId.");
+
+                throw ex;
+            }
+        }
         [HttpGet("getTimeAscAuctions")]
         public List<AuctionDTO> GetTimeAscAuctions()
         {
@@ -28,6 +46,7 @@ namespace AuctionApp.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while GetTimeAscAuctions.");
                 throw ex;
             }
         }
@@ -48,9 +67,11 @@ namespace AuctionApp.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while getAuctionById.");
+
                 throw ex;
             }
-         
+
         }
 
         [HttpPost("createAuction")]
@@ -64,6 +85,7 @@ namespace AuctionApp.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while CreateAuction.");
 
                 throw ex;
             }
@@ -86,9 +108,11 @@ namespace AuctionApp.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while BidAuction.");
+
                 throw ex;
             }
-           
+
         }
 
         [HttpDelete("deleteAuction")]
@@ -107,6 +131,8 @@ namespace AuctionApp.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while DeleteAuction.");
+
                 throw ex;
             }
 
